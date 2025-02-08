@@ -53,7 +53,11 @@ python RR_IM.py
 
 ## SpreadRec
 
-Based on the same spread probability, we can aggreagte the spread influence of each node.
+Based on the same spread probability, we can aggreagte the spread influence of each node. For generating SpreadRec scores, running the code as follows:
+
+```
+python SpreadRec.py
+```
 
 
 
