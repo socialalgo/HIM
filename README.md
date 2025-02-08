@@ -39,6 +39,17 @@ Since getting the probability predicted, first normalized the probability based 
 
 The data provided to implement the RR-IM is availiable at link [Baidu disk](https://pan.baidu.com/s/1CUMfvGCNqU3CseP7N1ax_g?pwd=qwrw). (P.S. Data provided has been normalized)
 
+After downloading the data in the root directory, run the following code first, for the data preprocessing:
+
+```
+python utils.py
+```
+
+Then Running the following code for the RR-IM:
+
+```
+python RR_IM.py
+```
 
 ## SpreadRec
 

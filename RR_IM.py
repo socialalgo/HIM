@@ -2,6 +2,7 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
+import json
 import argparse
 import collections
 import string
@@ -14,11 +15,11 @@ import time
 import random
 import pandas
 import numpy as np
-from utils.data_process import PortraitFeatureData
 import datetime
 from multiprocessing.pool import ThreadPool
 import math
 from collections import Counter
+
 
 class Graph_S3:
     def __init__(self, fname):
@@ -36,99 +37,51 @@ class Graph_S3:
         print("edge list length: ", len(self.edges))
         print("node list length: ", len(self.nodes))
 
-
     def read_n(self, args):
-        path = args.data_input.split(',')[0]  #first file of kp input
+        path = "network_scale.csv"
         print("Reading the abstract of graph...")
 
-        s3fs.S3FileSystem = S3FileSystemPatched
-        fs = s3fs.S3FileSystem()
+        n = pd.read_csv(path, header=None).values.tolist()[0][0]
 
-        """get file """
-        input_files = sorted([file for file in fs.ls(path) if file.find("part-") != -1])
-        fname = input_files[0]
-
-        with fs.open("s3://" + fname, mode= "r") as file_obj:
-
-            n = int(file_obj.readline())
-
-            self.edges = [[] for _ in range(n)]
-            self.edges_T = [[] for _ in range(n)]
-            self.degrees = [0 for _ in range(n)]
-            self.nodes = [i for i in range(n)]
-
+        self.edges = [[] for _ in range(n)]
+        self.edges_T = [[] for _ in range(n)]
+        self.degrees = [0 for _ in range(n)]
+        self.nodes = [i for i in range(n)]
 
     def read_attribute(self, args):
-        path = args.data_input.split(',')[1]  #second file of kp input
+        path = "deg_list.csv"  # second file of kp input
         print("Reading the nodes' attribute of graph...")
-
-        s3fs.S3FileSystem = S3FileSystemPatched
-        fs = s3fs.S3FileSystem()
-
-        """get file """
-        input_files = sorted([file for file in fs.ls(path) if file.find("part-") != -1])
-        print("num of s3 files: " + str(len(input_files)))
 
         """setting data format"""
         dt = np.dtype([('v', np.int64), ('w', np.float64)])
+        deg_list = pd.read_csv(path, header=None).values.tolist()
 
-        cnt = 0
-        for fname in input_files:
-            with fs.open("s3://" + fname, mode= "r") as file_obj:
-                cnt += 1
-                print("reading attribute: " + str(cnt) + "th file...")
+        for row in deg_list:
+            uid, out_deg, in_deg = int(row[0]), int(row[1]), int(row[2])
 
-                data = file_obj.readlines()
-                for row in data:
-
-                    row = row.strip().split(',')
-                    uid, out_deg, in_deg = int(row[0]), int(row[1]), int(row[2])
-
-                    self.degrees[uid] = out_deg
-                    self.edges[uid] = np.array([(0, 0) for _ in range(out_deg)], dtype=dt)
-                    self.edges_T[uid] = np.array([(0, 0) for _ in range(in_deg)], dtype=dt)
-
-                del data
-
+            self.degrees[uid] = out_deg
+            self.edges[uid] = np.array([(0, 0) for _ in range(out_deg)], dtype=dt)
+            self.edges_T[uid] = np.array([(0, 0) for _ in range(in_deg)], dtype=dt)
 
     def read_graph(self, args):
-        path = args.data_input.split(',')[2]  #third file of kp input
+        path = "edge_list.csv"  # third file of kp input
         print("Reading the linklist of graph...")
-
-        s3fs.S3FileSystem = S3FileSystemPatched
-        fs = s3fs.S3FileSystem()
-
-        """get file """
-        input_files = sorted([file for file in fs.ls(path) if file.find("part-") != -1])
-        print("num of s3 files: " + str(len(input_files)))
 
         cnt = 0
 
         count = [0 for _ in range(self.number_of_nodes())]
         count_T = [0 for _ in range(self.number_of_nodes())]
 
-        for fname in input_files:
-            with fs.open("s3://" + fname, mode= "r") as file_obj:
-                cnt += 1
-                print("reading linklist: " + str(cnt) + "th file...")
+        edge_list = pd.read_csv(path, header=None).values.tolist()
 
-                data = file_obj.readlines()
+        for row in edge_list:
+            u, v, w = int(row[0]), int(row[1]), float(row[2])
 
-                for row in data:
-                    row = row.strip().split(',')
-                    u, v, w = int(row[0]), int(row[1]), float(row[2])
-
-                    print(u, v, w)
-                    print(count[u], len(self.edges[u]))
-
-                    self.edges[u][count[u]] = (v, w)
-                    self.edges_T[v][count_T[v]] = (u, w)
-                    count[u] += 1
-                    count_T[v] += 1
-                    self.m += 1
-
-                del data
-
+            self.edges[u][count[u]] = (v, w)
+            self.edges_T[v][count_T[v]] = (u, w)
+            count[u] += 1
+            count_T[v] += 1
+            self.m += 1
 
     def degree(self, u):
         return self.degrees[u]
@@ -141,10 +94,10 @@ class Graph_S3:
 
 
 def get_source(args):
-    seed_path = args.data_input.split(',')[3]
-    #      #data = PortraitFeatureData().loadS3Data(seed_path,single_col=True)
-    data = PortraitFeatureData().loadS3Data(seed_path)
-    all_sources = data[0].astype(int).values.tolist()
+
+    seed_path = "ap_list.csv"
+    data = pd.read_csv(seed_path, header=None).values.tolist()
+    all_sources = [_[0] for _ in data]
     print("all sources top5: " + str(all_sources[:5]))
 
     del data
@@ -160,6 +113,7 @@ def get_seed_candidates(g, sources):
         for v, _ in g.edges[u]:
             candidates.add(v)
     return candidates
+
 
 def RR_set_IC_instance(g):
     """返回随机一个节点的可达集合"""
@@ -178,6 +132,7 @@ def RR_set_IC_instance(g):
                     vis.add(v)
                     que.append(v)
     return tuple(result)
+
 
 def RR_set_IC_instance_given_node(g, node):
     """返回随机一个节点的可达集合"""
@@ -219,13 +174,13 @@ def GIM_global_selection(g, ap, R):
 
     cnt = 0
     while len(Q) > 0:
-        cover_num_v, v = heapq.heappop(Q) # find the best candidate 'v' from RR sets
+        cover_num_v, v = heapq.heappop(Q)  # find the best candidate 'v' from RR sets
 
-        if -cover_num_v > cover_num[v]: # the coverage value in the priority queue is out-of-date
+        if -cover_num_v > cover_num[v]:  # the coverage value in the priority queue is out-of-date
             heapq.heappush(Q, (-cover_num[v], v))
-            continue # pass current round
+            continue  # pass current round
 
-        if cover_num_v == 0:  #cannot find any marginal gain, stop iteration
+        if cover_num_v == 0:  # cannot find any marginal gain, stop iteration
             print("no marginnal gain, out of iteration")
             break
 
@@ -235,7 +190,7 @@ def GIM_global_selection(g, ap, R):
         # identify ap which appear in v's vaild RR sets
         tmp = [w for rr_index in covered[v] if rr_index not in RR_set_covered for w in R[rr_index] if w in source_of_v]
 
-        #true_aps = list(set(tmp))
+        # true_aps = list(set(tmp))
 
         true_aps = Counter(tmp)
 
@@ -262,7 +217,7 @@ def GIM_global_selection(g, ap, R):
         if cnt <= 3:
             print(cnt)
             print("current node: " + str(v))
-            print("current cover num: " + str(cover_num_v))
+            print("current cover num: " + str(-cover_num_v))
             print("len of source_of_v: " + str(len(source_of_v)))
             print("len of true_aps: " + str(len(true_aps)))
 
@@ -270,8 +225,8 @@ def GIM_global_selection(g, ap, R):
 
     return results, current_influence
 
-def run_RR_IM(g, ap, args, eps, delta):
-    
+
+def run_RR_IM(g, ap, args):
     # 得到所有的节点集合，并计算生成的rr-set数量（总节点数*每个节点的采样数 upper_ratio）
     node_set = g.nodes
     theta_0 = len(node_set) * args.sample_number
@@ -283,9 +238,9 @@ def run_RR_IM(g, ap, args, eps, delta):
 
     print("generating rr set: " + str(theta_0))
 
-    R1 = [None]*theta_0
+    R1 = [None] * theta_0
     cur = 0
-    #generate rr set
+    # generate rr set
 
     t_start = time.time()
     for i, node in enumerate(node_set):
@@ -293,18 +248,17 @@ def run_RR_IM(g, ap, args, eps, delta):
             R1[cur] = RR_set_IC_instance_given_node(g, node)
             cur += 1
 
-            if (cur+1) % 500000 == 0:
-                print(str(cur+1) + "/" + str(theta_0) + "...")
+            if (cur + 1) % 500000 == 0:
+                print(str(cur + 1) + "/" + str(theta_0) + "...")
 
     t_end = time.time()
-    print('complete RR set generation, using ' + str(t_end-t_start) + 's')
+    print('complete RR set generation, using ' + str(t_end - t_start) + 's')
 
-    friends_list,  upperC = GIM_global_selection(g, ap, R1)
-
+    friends_list, upperC = GIM_global_selection(g, ap, R1)
 
     res = []
     for v, u, score, rank in friends_list:
-        res.append([u,v,score,rank])
+        res.append([u, v, score, rank])
 
     return res
 
@@ -322,7 +276,7 @@ if __name__ == '__main__':
     )
     parser.add_argument(
         "--sample_number",
-        default=50,
+        default=1,
         type=float
     )
     args, _ = parser.parse_known_args()
@@ -335,7 +289,17 @@ if __name__ == '__main__':
     sources = get_source(args)
     print("num of sources: " + str(len(sources)))
 
-    res = run_RR_IM(g, sources, args, 0.1, 1.0 / g.number_of_nodes())
+    res = run_RR_IM(g, sources, args)
 
-    with open("RR_IM_output.json", "w") as fw:
-        json.dump(res, fw)
+    with open("id2uid.json", "r") as fr:
+        id2uid = json.load(fr)
+
+    rec_data = []
+    for rec in res:
+        uid = id2uid[str(rec[0])]
+        frienduid = id2uid[str(rec[1])]
+        number_of_shared_rr_set = rec[2]
+        rec_data.append([uid,frienduid, number_of_shared_rr_set])
+
+    df_rec = pd.DataFrame(rec_data, columns=['uid', 'frienduid', 'rr_shared'])
+    df_rec.to_csv("rec_result_rr_im.csv", header=True, index=False, encoding='utf-8')

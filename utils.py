@@ -1,7 +1,8 @@
+import json
 import pandas as pd
 from collections import defaultdict
 
-edge_df = pd.read_csv("twitter_EulerNet_new_normed.csv")
+edge_df = pd.read_csv("twitter_network_normed.csv")
 uid2id = dict()
 id2uid = dict()
 indeg = defaultdict(int)
@@ -14,8 +15,8 @@ edges = edge_df.values.tolist()
 
 for row in edges:
 
-    src = row[0]
-    dst = row[1]
+    src = int(row[0])
+    dst = int(row[1])
     prob = row[2]
     if src not in uid2id:
         id2uid[id] = src
@@ -40,6 +41,9 @@ Node_number = [len(uid2id.keys())]
 ap_list = list(ap)
 
 print("processed!")
+
+with open("id2uid.json", "w") as fp:
+    json.dump(id2uid, fp)
 
 df_n = pd.DataFrame(Node_number).to_csv('network_scale.csv', index=False, encoding='utf-8', header=None)
 df_deg = pd.DataFrame(deg_list).to_csv('deg_list.csv', index=False, encoding='utf-8', header=None)
