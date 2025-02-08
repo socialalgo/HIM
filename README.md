@@ -10,7 +10,8 @@ For the deepwalk embedding used to trained the ctr model in our work can be refe
 ## Spread Probability modeling
 
 FuxiCTR-main-HIM directory includes the code to implement the training and predict process of the spread probability $P_{ij}$. The source repository is available at [FuxiCTR repository](https://github.com/reczoo/FuxiCTR).
-                                          
+
+```                                          
 ├─ data                             --  training and testing data for Precision, Recall, NDCG@k                                                                   
 ├─ model_zoo                        -- directory containing the AutoInt, FinalNet, EulerNet model                                     
 │  ├─ EulerNet                                               
@@ -19,7 +20,7 @@ FuxiCTR-main-HIM directory includes the code to implement the training and predi
 │  └──── run_pred.py                -- Predict file   
 ├─ requirements.txt                                          
 └─ setup.py                                                                 
-
+```
 For training mode, shift the dataset_id of EulerNet_default to twitter_data_train in model_config.yaml. And execute the code as follows:
 
 ```
