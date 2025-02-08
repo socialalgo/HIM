@@ -1,0 +1,13 @@
+twitter_data_train:
+    data_root: ../../data/
+    data_format: parquet
+    train_data: ../../data/twitter_data_train/train.parquet
+    valid_data: ../../data/twitter_data_train/valid.parquet
+    test_data: ../../data/twitter_data_train/test.parquet
+
+twitter_data_test:
+    data_root: ../../data/
+    data_format: parquet
+    train_data: ../../data/twitter_data_test/train.parquet
+    valid_data: ../../data/twitter_data_test/valid.parquet
+    test_data: ../../data/twitter_data_test/test.parquet
