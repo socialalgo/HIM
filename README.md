@@ -21,13 +21,13 @@ FuxiCTR-main-HIM directory includes the code to implement the training and predi
 ├─ requirements.txt                                          
 └─ setup.py                                                                 
 ```
-For training mode, shift the dataset_id of EulerNet_default to twitter_data_train in model_config.yaml. And execute the code as follows:
+For training mode, shift the dataset_id of EulerNet_default to twitter_data_train in model_config.yaml. Before running, you should unzip the file in FuxiCTR-main-HIM/data/twitter_data_train and then execute the code as follows:
 
 ```
 python run_expid.py
 ```
 
-For testing mode, shift the  dataset_id of EulerNet_default to twitter_data_test in model_config.yaml. And execute the code as follows:
+For testing mode, shift the dataset_id of EulerNet_default to twitter_data_test in model_config.yaml. Before running, you should copy the extra files from the FuxiCTR-main-HIM/data/twitter_data_train to the FuxiCTR-main-HIM/data/twitter_data_test. And execute the code as follows:
 
 ```
 python run_pred.py
