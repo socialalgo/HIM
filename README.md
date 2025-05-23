@@ -1,11 +1,23 @@
 # HIM
 Heterogeneous Influence Maximization in User Recommendation
 
+## Enviroment
+
+```
+conda create -n HIM python==3.10
+conda activate HIM
+pip install numpy
+pip install pandas
+pip install tqdm
+```
+
 ## Datests
 
 The Twitter dataset is avaiable in datasets/, which includes the graph network and the spread trajectory.
 
 For the deepwalk embedding used to trained the ctr model in our work can be reference at [DeepInf Repository](https://github.com/xptree/DeepInf?tab=readme-ov-file)
+
+To run the HeteroIR and HeteroIM, the data provided is availiable at link [Baidu disk](https://pan.baidu.com/s/17PbtUpIUgeOPZLyfH0Hoqg?pwd=mun5). Please download the file to the dataset/ Folder for the further execution.
 
 ## Spread Probability modeling
 
@@ -33,31 +45,38 @@ For testing mode, shift the dataset_id of EulerNet_default to twitter_data_test 
 python run_pred.py
 ```
 
-## RR-IM
+## HeteroIR
 
-Since getting the probability predicted, first normalized the probability based on the details in Section 5.2. In the data provided, the normalization factor is equal to 100.
-
-The data provided to implement the RR-IM is availiable at link [Baidu disk](https://pan.baidu.com/s/1CUMfvGCNqU3CseP7N1ax_g?pwd=qwrw). (P.S. Data provided has been normalized)
-
-After downloading the data in the root directory, run the following code first, for the data preprocessing:
+Based on the probability predicted, we can aggreagte the spread influence of each node. For generating SpreadRec scores, running the code as follows:
 
 ```
-python utils.py
+python HeteroIR.py
 ```
 
-Then Running the following code for the RR-IM:
+## HeteroIM
+
+To get the recommendation results obtained by HeteroIM, running the following code as follows:
 
 ```
-python RR_IM.py
+python HeteroIM.py
 ```
 
-## SpreadRec
+## Evaluation
 
-Based on the same spread probability, we can aggreagte the spread influence of each node. For generating SpreadRec scores, running the code as follows:
+The evaluation implementation about Recall@K, NDCG@K and NSpread@K is available at evaluators.py
+
+To get the evaluation results on EulerNet, please running the following code as follows:
 
 ```
-python SpreadRec.py
+python evaluators.py
 ```
 
+## Extension
 
+To run the HeteroIM algorithm on your own datasets, you can run the following codes for the preprocess of the network data.
 
+Change the csv file name in preprocess.py to your file, which contains three coloums [src, tar, probability]
+
+```
+python preprocess.py
+```
