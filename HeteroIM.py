@@ -38,7 +38,7 @@ class Graph_S3:
         print("node list length: ", len(self.nodes))
 
     def read_n(self, args):
-        path = "data/network_scale.csv"
+        path = "datasets/network_scale.csv"
         print("Reading the abstract of graph...")
 
         n = pd.read_csv(path, header=None).values.tolist()[0][0]
@@ -49,7 +49,7 @@ class Graph_S3:
         self.nodes = [i for i in range(n)]
 
     def read_attribute(self, args):
-        path = "data/deg_list.csv"  # second file of kp input
+        path = "datasets/deg_list.csv"  # second file of kp input
         print("Reading the nodes' attribute of graph...")
 
         """setting data format"""
@@ -64,7 +64,7 @@ class Graph_S3:
             self.edges_T[uid] = np.array([(0, 0) for _ in range(in_deg)], dtype=dt)
 
     def read_graph(self, args):
-        path = "data/edge_list.csv"  # third file of kp input
+        path = "datasets/edge_list.csv"  # third file of kp input
         print("Reading the linklist of graph...")
 
         count = [0 for _ in range(self.number_of_nodes())]
@@ -96,7 +96,7 @@ class Graph_S3:
 
 def get_source(args):
 
-    seed_path = "data/ap_list_spread_final.csv"
+    seed_path = "datasets/ap_list_spread_final.csv"
     data = pd.read_csv(seed_path, header=None).values.tolist()
     all_sources = [_[0] for _ in data]
     print("all sources top5: " + str(all_sources[:5]))
@@ -302,7 +302,7 @@ if __name__ == '__main__':
     sources = get_source(args)
     print("num of sources: " + str(len(sources)))
 
-    with open("data/id2uid.json", "r") as fr:
+    with open("datasets/id2uid.json", "r") as fr:
         id2uid = json.load(fr)
 
     uid2id = dict()

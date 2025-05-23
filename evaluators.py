@@ -9,7 +9,7 @@ from tqdm import tqdm
 
 def spread_num_process():
 
-    spread_Data = pd.read_csv("data/twitter_spread.csv")
+    spread_Data = pd.read_csv("datasets/twitter_spread.csv")
     spread = np.array(spread_Data)
 
     spread_num = defaultdict(int)
@@ -25,7 +25,7 @@ def Theory_maximum_rec():
 
     Kmax = 3
 
-    spread_Data = pd.read_csv("data/twitter_spread.csv")
+    spread_Data = pd.read_csv("datasets/twitter_spread.csv")
 
     col0 = spread_Data.columns[0]
     col1 = spread_Data.columns[1]
@@ -95,10 +95,10 @@ def ISpread_K_calculated():
     ISpread_K = []
 
     # test nodes
-    ap_file = "data/ap_list_spread_final.csv"
+    ap_file = "datasets/ap_list_spread_final.csv"
     test_node = [_ for _ in np.array(pd.read_csv(ap_file, header=None)).reshape(-1, )]
 
-    spread_Data = pd.read_csv("data/twitter_spread.csv")
+    spread_Data = pd.read_csv("datasets/twitter_spread.csv")
 
     upper_limit_user = Theory_maximum_rec()
     print("Theory recommend list generated!")
@@ -146,18 +146,18 @@ def ISpread_K_calculated():
         ISpread_K.append(len(np.unique(second_coverage)))
 
     df = pd.DataFrame(ISpread_K)
-    df.to_csv("data/ISpread@K.csv", index=False, header=False)
+    df.to_csv("datasets/ISpread@K.csv", index=False, header=False)
 
 def evaluate(Recommendation):
 
     print("Evaluation Begins")
 
     # Get idmap
-    with open("data/id2uid.json", "r") as fidr:
+    with open("datasets/id2uid.json", "r") as fidr:
         idmap = json.load(fidr)
 
     # network & probability predicted by EulerNet
-    edge_list = np.array(pd.read_csv("data/edge_list.csv", header=None))
+    edge_list = np.array(pd.read_csv("datasets/edge_list.csv", header=None))
     frienddict = defaultdict(list)
     for src, dst, p in edge_list:
         frienddict[idmap[str(int(src))]].append(idmap[str(int(dst))])
@@ -166,10 +166,10 @@ def evaluate(Recommendation):
         friendnum[uid] = len(frienddict[uid])
 
     # spread_Data是原始uid
-    spread_Data = pd.read_csv("data/twitter_spread.csv")
+    spread_Data = pd.read_csv("datasets/twitter_spread.csv")
 
     # test node file
-    ap_file = "data/ap_list_spread_final.csv"
+    ap_file = "datasets/ap_list_spread_final.csv"
     test_left_node = [idmap[str(_)] for _ in np.array(pd.read_csv(ap_file, header=None)).reshape(-1, )]
     test_node_dict = dict()
     for node in test_left_node:
@@ -263,11 +263,11 @@ def evaluate(Recommendation):
     ndcg_res = [np.mean(ndcg) for ndcg in NDCG_K]
     Spread_K_unique = [len(np.unique(spk)) for spk in Spread_K_full]
 
-    if os.path.exists("data/ISpread@K.csv") is not True:
+    if os.path.exists("datasets/ISpread@K.csv") is not True:
         print("Compute the ISpread@K")
         ISpread_K_calculated()
 
-    ISpread_K = np.array(pd.read_csv("data/ISpread@K.csv", header=None)).reshape(-1, )
+    ISpread_K = np.array(pd.read_csv("datasets/ISpread@K.csv", header=None)).reshape(-1, )
 
     print("Recall@1, 2, 3 = [{}, {}, {}]".format(recall_res[0], recall_res[1], recall_res[2]))
     print("NDCG@1, 2, 3 = [{}, {}, {}]".format(ndcg_res[0], ndcg_res[1], ndcg_res[2]))
@@ -277,10 +277,10 @@ def evaluate(Recommendation):
 
 if __name__ == '__main__':
 
-    EulerNet_data = pd.read_csv("data/edge_list.csv").values.tolist()
+    EulerNet_data = pd.read_csv("datasets/edge_list.csv").values.tolist()
     Recommendation = []
 
-    with open("data/id2uid.json", "r") as fr:
+    with open("datasets/id2uid.json", "r") as fr:
         idmap = json.load(fr)
 
     for src, tar, prob in EulerNet_data:

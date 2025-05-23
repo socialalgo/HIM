@@ -1,11 +1,16 @@
 # HIM
 Heterogeneous Influence Maximization in User Recommendation
 
+## Enviroment
+
+
 ## Datests
 
 The Twitter dataset is avaiable in datasets/, which includes the graph network and the spread trajectory.
 
 For the deepwalk embedding used to trained the ctr model in our work can be reference at [DeepInf Repository](https://github.com/xptree/DeepInf?tab=readme-ov-file)
+
+To run the HeteroIR and HeteroIM, the data provided is availiable at link [Baidu disk](https://pan.baidu.com/s/17PbtUpIUgeOPZLyfH0Hoqg?pwd=mun5). Please download the file to the dataset/ Folder for the further execution.
 
 ## Spread Probability modeling
 
@@ -35,42 +40,28 @@ python run_pred.py
 
 ## HeteroIR
 
-Based on the same spread probability, we can aggreagte the spread influence of each node. For generating SpreadRec scores, running the code as follows:
+Based on the probability predicted, we can aggreagte the spread influence of each node. For generating SpreadRec scores, running the code as follows:
 
 ```
-python SpreadRec.py
+python HeteroIR.py
 ```
 
 ## HeteroIM
 
-Since getting the probability predicted, first normalized the probability based on the details in Section 5.2. In the data provided, the normalization factor is equal to 100.
-
-The data provided to implement the RR-IM is availiable at link [Baidu disk](https://pan.baidu.com/s/1CUMfvGCNqU3CseP7N1ax_g?pwd=qwrw). (P.S. Data provided has been normalized)
-
-After downloading the data in the root directory, run the following code first, for the data preprocessing:
+To get the recommendation results obtained by HeteroIM, running the following code as follows:
 
 ```
-python utils.py
-```
-
-Then Running the following code for the RR-IM:
-
-```
-python RR_IM.py
+python HeteroIM.py
 ```
 
 ## Evaluation
 
-Please execute the following code to reproduce the results of the original paper Twitter dataset:
+The evaluation implementation about Recall@K, NDCG@K and NSpread@K is available at evaluators.py
 
-1. To get the ISpread@K in twitter dataset, please run the following code first:
-
-```
-python evaluation.py
-```
+To get the evaluation results on EulerNet, please running the following code as follows:
 
 ```
-python evaluation.py
+python evaluators.py
 ```
 
 

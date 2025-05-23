@@ -8,7 +8,7 @@ from evaluators import evaluate
 
 # The implementation of Heterogeneous influence algorithm
 
-with open("data/id2uid.json", "r") as fidr:
+with open("datasets/id2uid.json", "r") as fidr:
     idmap = json.load(fidr)
 
 def HeteroIR(inter_capacity = 4):
@@ -18,7 +18,7 @@ def HeteroIR(inter_capacity = 4):
     src_node_dict = defaultdict(list)
     HeteroInf_dict = dict() # store the heteroinf of each node
 
-    edge_data = pd.read_csv("data/edge_list.csv", header=None).values.tolist()
+    edge_data = pd.read_csv("datasets/edge_list.csv", header=None).values.tolist()
     src_node_list = np.unique(np.array(edge_data)[:, 0].astype(np.int32))
     dst_node_list = np.unique(np.array(edge_data)[:, 1].astype(np.int32))
     node_list = np.union1d(src_node_list, dst_node_list)
