@@ -71,4 +71,12 @@ To get the evaluation results on EulerNet, please running the following code as 
 python evaluators.py
 ```
 
+## Extension
 
+To run the HeteroIM algorithm on your own datasets, you can run the following codes for the preprocess of the network data.
+
+Change the csv file name in preprocess.py to your file, which contains three coloums [src, tar, probability]
+
+```
+python preprocess.py
+```
