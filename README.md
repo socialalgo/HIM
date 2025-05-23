@@ -33,7 +33,15 @@ For testing mode, shift the dataset_id of EulerNet_default to twitter_data_test 
 python run_pred.py
 ```
 
-## RR-IM
+## HeteroIR
+
+Based on the same spread probability, we can aggreagte the spread influence of each node. For generating SpreadRec scores, running the code as follows:
+
+```
+python SpreadRec.py
+```
+
+## HeteroIM
 
 Since getting the probability predicted, first normalized the probability based on the details in Section 5.2. In the data provided, the normalization factor is equal to 100.
 
@@ -51,13 +59,18 @@ Then Running the following code for the RR-IM:
 python RR_IM.py
 ```
 
-## SpreadRec
+## Evaluation
 
-Based on the same spread probability, we can aggreagte the spread influence of each node. For generating SpreadRec scores, running the code as follows:
+Please execute the following code to reproduce the results of the original paper Twitter dataset:
+
+1. To get the ISpread@K in twitter dataset, please run the following code first:
 
 ```
-python SpreadRec.py
+python evaluation.py
 ```
 
+```
+python evaluation.py
+```
 
 
