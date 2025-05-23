@@ -3,6 +3,13 @@ Heterogeneous Influence Maximization in User Recommendation
 
 ## Enviroment
 
+```
+conda create -n HIM python==3.10
+conda activate HIM
+pip install numpy
+pip install pandas
+pip install tqdm
+```
 
 ## Datests
 
