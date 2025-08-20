@@ -80,3 +80,16 @@ Change the csv file name in preprocess.py to your file, which contains three col
 ```
 python preprocess.py
 ```
+
+## Reference 
+```
+@misc{him,
+      title={Heterogeneous Influence Maximization in User Recommendation}, 
+      author={Hongru Hou and Jiachen Sun and Wenqing Lin and Wendong Bi and Xiangrong Wang and Deqing Yang},
+      year={2025},
+      eprint={2508.13517},
+      archivePrefix={arXiv},
+      primaryClass={cs.IR},
+      url={https://arxiv.org/abs/2508.13517}, 
+}
+```
